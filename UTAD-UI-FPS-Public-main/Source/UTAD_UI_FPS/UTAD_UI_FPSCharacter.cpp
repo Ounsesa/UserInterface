@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "TP_WeaponComponent.h"
 
 // UI
 #include "Blueprint/UserWidget.h"
@@ -60,6 +61,7 @@ void AUTAD_UI_FPSCharacter::BeginPlay()
 		PlayerHUDInstance = CreateWidget<UPlayerHUD>(GetWorld(), PlayerHUDWidget);
 		PlayerHUDInstance->AddToViewport();
 		PlayerHUDInstance->ShowNoWeapon();
+		OnHealthChanged.ExecuteIfBound(Health, MaxHealth);
 	}
 	else
 	{
@@ -120,6 +122,7 @@ void AUTAD_UI_FPSCharacter::SetHealth(int NewHealth)
 	if (ClampedNewHealth != Health)
 	{
 		Health = ClampedNewHealth;
+		OnHealthChanged.ExecuteIfBound(Health, MaxHealth);
 	}
 }
 
@@ -142,6 +145,9 @@ void AUTAD_UI_FPSCharacter::SetHasRifle(bool bNewHasRifle)
 {
 	bHasRifle = bNewHasRifle;
 	PlayerHUDInstance->ShowAll();
+	OnTotalBulletChanged.ExecuteIfBound(TotalBullets);
+	AttachedWeaponComponent->OnCurrentNumBulletsChanged.ExecuteIfBound(AttachedWeaponComponent->GetCurrentNumBullets());
+
 }
 
 bool AUTAD_UI_FPSCharacter::GetHasRifle()
@@ -152,6 +158,7 @@ bool AUTAD_UI_FPSCharacter::GetHasRifle()
 void AUTAD_UI_FPSCharacter::SetTotalBullets(int NewTotalBullets)
 {
 	TotalBullets = NewTotalBullets;
+	OnTotalBulletChanged.ExecuteIfBound(TotalBullets);
 }
 
 int AUTAD_UI_FPSCharacter::GetTotalBullets()

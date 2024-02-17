@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "AmmoCounter.generated.h"
 
+class UTP_WeaponComponent;
+
 /**
  * 
  */
@@ -14,6 +16,11 @@ class UTAD_UI_FPS_API UAmmoCounter : public UUserWidget
 {
 	GENERATED_BODY()
 public:
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* CurrentAmmo;
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* TotalAmmo;
 
 	UFUNCTION(BlueprintCallable, Category = Visibility)
 	void Show();
@@ -26,4 +33,5 @@ private:
 	void UpdateCurrentAmmo(int NewCurrentAmmo);
 
 	void UpdateTotalAmmo(int NewTotalAmmo);
+	UTP_WeaponComponent* weaponComponent;
 };

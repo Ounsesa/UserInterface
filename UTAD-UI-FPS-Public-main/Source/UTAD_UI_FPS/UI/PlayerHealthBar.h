@@ -16,11 +16,16 @@ class UTAD_UI_FPS_API UPlayerHealthBar : public UUserWidget
 	
 public:
 
+	virtual void NativeConstruct() override;
+
 	UFUNCTION(BlueprintCallable, Category = Visibility)
 	void Show();
 
 	UFUNCTION(BlueprintCallable, Category = Visibility)
 	void Hide();
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class UProgressBar* PlayerHealthBar;
 
 protected:
 

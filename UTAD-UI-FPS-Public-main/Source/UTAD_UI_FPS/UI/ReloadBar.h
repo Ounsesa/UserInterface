@@ -16,11 +16,15 @@ class UTAD_UI_FPS_API UReloadBar : public UUserWidget
 
 public:
 
+
 	UFUNCTION(BlueprintCallable, Category = Visibility)
 	void Show();
 
 	UFUNCTION(BlueprintCallable, Category = Visibility)
 	void Hide();
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class UProgressBar* ReloadBar;
 
 private:
 

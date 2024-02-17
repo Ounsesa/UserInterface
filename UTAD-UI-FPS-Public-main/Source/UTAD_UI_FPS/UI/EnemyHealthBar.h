@@ -19,4 +19,7 @@ public:
 	/** Update the player health bar with the given value */
 	UFUNCTION(BlueprintCallable)
 	void UpdateEnemyHealthBarValue(int Value, int MaxValue);
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class UProgressBar* EnemyHealthBar;
 };

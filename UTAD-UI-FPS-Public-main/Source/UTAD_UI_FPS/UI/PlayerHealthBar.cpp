@@ -16,9 +16,21 @@ void UPlayerHealthBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 
 }
 
+void UPlayerHealthBar::NativeConstruct()
+{
+	Super::NativeConstruct();
+	AUTAD_UI_FPSCharacter* Character = Cast<AUTAD_UI_FPSCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (Character)
+	{
+		Character->OnHealthChanged.BindUObject(this, &UPlayerHealthBar::UpdatePlayerHealthBar);
+	}
+}
+
+
 void UPlayerHealthBar::Show()
 {
 	SetVisibility(ESlateVisibility::HitTestInvisible);
+	
 }
 
 void UPlayerHealthBar::Hide()
@@ -28,7 +40,16 @@ void UPlayerHealthBar::Hide()
 
 void UPlayerHealthBar::UpdatePlayerHealthBar(int NewHealth, int MaxHealth)
 {
-
+	float HealthPercentage = (float)NewHealth / (float)MaxHealth;
+	PlayerHealthBar->SetPercent(HealthPercentage);
+	if (HealthPercentage <= BLINK_THRESHOLD)
+	{
+		bIsLowHealth = true;
+	}
+	else
+	{
+		bIsLowHealth = false;
+	}
 }
 
 void UPlayerHealthBar::LowHealthBlink()

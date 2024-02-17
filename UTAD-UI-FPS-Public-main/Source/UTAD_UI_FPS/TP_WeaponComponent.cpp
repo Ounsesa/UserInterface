@@ -83,6 +83,7 @@ void UTP_WeaponComponent::Fire()
 	}
 
 	--CurrentNumBullets;
+	OnCurrentNumBulletsChanged.ExecuteIfBound(CurrentNumBullets);
 }
 
 void UTP_WeaponComponent::StartReload()
@@ -118,7 +119,10 @@ void UTP_WeaponComponent::CompleteReload()
 
 	CurrentNumBullets = __min(MagazineSize, playerBullets);
 
+
 	Character->SetTotalBullets(playerBullets - CurrentNumBullets);
+	OnCurrentNumBulletsChanged.ExecuteIfBound(CurrentNumBullets);
+	OnReload.ExecuteIfBound(100);
 }
 
 void UTP_WeaponComponent::CancelReload()
@@ -128,7 +132,15 @@ void UTP_WeaponComponent::CancelReload()
 		return;
 	}
 
+
 	bIsReloading = false;
+	OnReload.ExecuteIfBound(0);
+}
+
+void UTP_WeaponComponent::WhileReload()
+{
+	
+	OnReload.ExecuteIfBound(ReloadTimer);
 }
 
 int UTP_WeaponComponent::GetMagazineSize()
@@ -185,6 +197,9 @@ void UTP_WeaponComponent::AttachWeapon(AUTAD_UI_FPSCharacter* TargetCharacter)
 			// StartReload
 			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &UTP_WeaponComponent::StartReload);
 
+			// DuringReload
+			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Ongoing, this, &UTP_WeaponComponent::WhileReload);
+
 			// CompleteReload
 			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Completed, this, &UTP_WeaponComponent::CompleteReload);
 
@@ -192,6 +207,8 @@ void UTP_WeaponComponent::AttachWeapon(AUTAD_UI_FPSCharacter* TargetCharacter)
 			EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Canceled, this, &UTP_WeaponComponent::CancelReload);
 		}
 	}
+
+	OnReload.ExecuteIfBound(0);
 }
 
 void UTP_WeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)

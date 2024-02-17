@@ -6,9 +6,16 @@
 #include "../TP_WeaponComponent.h"
 #include "Components/ProgressBar.h"
 
+
+
 void UReloadBar::Show()
 {
-	SetVisibility(ESlateVisibility::HitTestInvisible);
+	SetVisibility(ESlateVisibility::HitTestInvisible); 
+	AUTAD_UI_FPSCharacter* Character = Cast<AUTAD_UI_FPSCharacter>(GetOwningPlayerPawn());
+	if (Character)
+	{
+		Character->GetAttachedWeaponComponent()->OnReload.BindUObject(this, &UReloadBar::UpdateReloadBarValue);
+	}
 }
 
 void UReloadBar::Hide()
@@ -18,5 +25,5 @@ void UReloadBar::Hide()
 
 void UReloadBar::UpdateReloadBarValue(float NewValue)
 {
-
+	ReloadBar->SetPercent(NewValue);
 }

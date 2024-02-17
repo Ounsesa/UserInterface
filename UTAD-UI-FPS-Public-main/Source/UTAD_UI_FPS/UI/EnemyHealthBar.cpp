@@ -7,5 +7,5 @@
 
 void UEnemyHealthBar::UpdateEnemyHealthBarValue(int Value, int MaxValue)
 {
-
+	EnemyHealthBar->SetPercent((float)Value / (float)MaxValue);
 }

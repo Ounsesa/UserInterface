@@ -10,9 +10,18 @@
 
 void AUTAD_UI_FPS_Enemy::BeginPlay()
 {
+	Super::BeginPlay();
+	UWidgetComponent* WidgetComponent = FindComponentByClass<UWidgetComponent>();
+	if (WidgetComponent)
+	{
+		EnemyHealthBar = Cast<UEnemyHealthBar>(WidgetComponent->GetWidget());
+		EnemyHealthBar->SetVisibility(ESlateVisibility::Collapsed);
+		WidgetComponent->CastShadow = false;
+	}
+	
+
 	PrimaryActorTick.bCanEverTick = true;
 
-	Super::BeginPlay();
 }
 
 void AUTAD_UI_FPS_Enemy::Tick(float DeltaSeconds)
@@ -23,10 +32,20 @@ void AUTAD_UI_FPS_Enemy::Tick(float DeltaSeconds)
 void AUTAD_UI_FPS_Enemy::SetHealth(int NewHealth)
 {
 	Health = FMath::Clamp(NewHealth, 0, MaxHealth);
+	if (EnemyHealthBar)
+	{
+		if (EnemyHealthBar->GetVisibility() != ESlateVisibility::SelfHitTestInvisible)
+		{
+			EnemyHealthBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		}
+		EnemyHealthBar->UpdateEnemyHealthBarValue(Health, MaxHealth);
+	}
+
 	if (Health == 0)
 	{
 		Destroy();
 	}
+	
 }
 
 int AUTAD_UI_FPS_Enemy::GetHealth()

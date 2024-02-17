@@ -8,6 +8,10 @@
 
 class AUTAD_UI_FPSCharacter;
 
+
+DECLARE_DELEGATE_OneParam(FOnCurrentNumBulletsChanged, int /* currentNumBullets */)
+DECLARE_DELEGATE_OneParam(FOnReload, float /* reloadProgress */)
+
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UTAD_UI_FPS_API UTP_WeaponComponent : public USkeletalMeshComponent
 {
@@ -75,6 +79,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void CancelReload();
 
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void WhileReload();
+
 	/** Getter for MagazineSize */
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	int GetMagazineSize();
@@ -90,6 +97,10 @@ public:
 	/** Setter for CurrentNumBullets */
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void SetCurrentNumBullets(int NewCurrentNumBullets);
+
+public: //Delegates
+	FOnCurrentNumBulletsChanged OnCurrentNumBulletsChanged;
+	FOnReload OnReload;
 
 protected:
 	/** Ends gameplay for this component. */

@@ -7,6 +7,7 @@
 #include "UTAD_UI_FPS_Enemy.generated.h"
 
 class UWidgetComponent;
+class UEnemyHealthBar;
 
 /**
  * 
@@ -48,4 +49,5 @@ protected:
 
 	virtual void BeginPlay() override;
 
+	UEnemyHealthBar* EnemyHealthBar;
 };
