@@ -3,6 +3,7 @@
 
 #include "ConfirmationPanel.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "SkillTree.h"
 
 void UConfirmationPanel::NativeConstruct()
@@ -17,6 +18,7 @@ void UConfirmationPanel::NativeConstruct()
 void UConfirmationPanel::Show()
 {
 	SetVisibility(ESlateVisibility::Visible);
+	Message->SetText(FText::FromString(FString::Printf(TEXT("Are you sure you want to upgrade\n this skill for %i points?"), SkillLevel)));
 	SkillTreeInstance->SetVisibility(ESlateVisibility::Hidden);
 }
 

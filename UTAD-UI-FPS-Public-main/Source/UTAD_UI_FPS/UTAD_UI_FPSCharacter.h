@@ -204,7 +204,7 @@ private:
 
 public:
 	TMap<ESkillType, int> SkillPoints;
-	int TotalSkillPoints = 12;
+	int TotalSkillPoints = 15;
 
 };
 
