@@ -2,16 +2,21 @@
 
 #include "UTAD_UI_FPSCharacter.h"
 #include "UTAD_UI_FPSProjectile.h"
+#include "UTAD_UI_FPS_Enemy.h"
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "TP_WeaponComponent.h"
+#include "Engine/World.h"
 
 // UI
 #include "Blueprint/UserWidget.h"
 #include "UI/PlayerHUD.h"
+#include "UI/GameOver.h"
+#include "UI/PlayerHitMarker.h"
+#include "UI/SplashScreen.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AUTAD_UI_FPSCharacter
@@ -55,19 +60,41 @@ void AUTAD_UI_FPSCharacter::BeginPlay()
 		}
 	}
 
-	// Setup Player HUD
-	if (PlayerHUDWidget)
+	//Set up all UI Widgets
+	SetUpUI();
+
+	
+}
+
+void AUTAD_UI_FPSCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (bHasRifle)
 	{
-		PlayerHUDInstance = CreateWidget<UPlayerHUD>(GetWorld(), PlayerHUDWidget);
-		PlayerHUDInstance->AddToViewport();
-		PlayerHUDInstance->ShowNoWeapon();
-		OnHealthChanged.ExecuteIfBound(Health, MaxHealth);
+		FVector CameraLocation = FirstPersonCameraComponent->GetComponentLocation();
+		FVector CameraForward = FirstPersonCameraComponent->GetForwardVector();
+		FVector End = CameraLocation + (CameraForward * 1000.f);
+
+
+		FHitResult OutHit;
+
+		bool bHit = GetWorld()->LineTraceSingleByChannel(OutHit, CameraLocation, End, ECC_Visibility);
+
+		if (bHit)
+		{
+			AUTAD_UI_FPS_Enemy* Enemy = Cast<AUTAD_UI_FPS_Enemy>(OutHit.GetActor());
+			if (Enemy)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("true"));
+			}
+
+		}
 	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Player HUD Widget not assigned to UTAD_UI_FPSCharacter"));
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Player HUD Widget not assigned to UTAD_UI_FPSCharacter"));
-	}
+
+
+
+	
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -86,6 +113,46 @@ void AUTAD_UI_FPSCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AUTAD_UI_FPSCharacter::Look);
+	}
+}
+
+void AUTAD_UI_FPSCharacter::SetUpUI()
+{
+	// Setup Player HUD
+	if (PlayerHUDWidget)
+	{
+		PlayerHUDInstance = CreateWidget<UPlayerHUD>(GetWorld(), PlayerHUDWidget);
+		PlayerHUDInstance->AddToViewport();
+		PlayerHUDInstance->ShowNoWeapon();
+		OnHealthChanged.ExecuteIfBound(Health, MaxHealth);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Player HUD Widget not assigned to UTAD_UI_FPSCharacter"));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Player HUD Widget not assigned to UTAD_UI_FPSCharacter"));
+	}
+
+	if (PlayerHitMarkerWidget)
+	{
+		PlayerHitMarkerInstance = CreateWidget<UPlayerHitMarker>(GetWorld(), PlayerHitMarkerWidget);
+		PlayerHitMarkerInstance->AddToViewport();
+		PlayerHitMarkerInstance->Hide();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Player Hit Marker Widget not assigned to UTAD_UI_FPSCharacter"));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Player Hit Marker Widget not assigned to UTAD_UI_FPSCharacter"));
+	}
+
+	if (SplashScreenWidget)
+	{
+		SplashScreenInstance = CreateWidget<USplashScreen>(GetWorld(), SplashScreenWidget);
+		SplashScreenInstance->AddToViewport();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Splash Screen Widget not assigned to UTAD_UI_FPSCharacter"));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Splash Screen Widget not assigned to UTAD_UI_FPSCharacter"));
 	}
 }
 
@@ -121,8 +188,22 @@ void AUTAD_UI_FPSCharacter::SetHealth(int NewHealth)
 	int ClampedNewHealth = FMath::Clamp(NewHealth, 0, MaxHealth);
 	if (ClampedNewHealth != Health)
 	{
+		if (NewHealth < Health && PlayerHitMarkerInstance)
+		{
+
+			PlayerHitMarkerInstance->Show();
+		}
 		Health = ClampedNewHealth;
 		OnHealthChanged.ExecuteIfBound(Health, MaxHealth);
+
+
+		if (Health <= 0 && GameOverWidget)
+		{
+			GameOverInstance = CreateWidget<UGameOver>(GetWorld(), GameOverWidget);
+			GameOverInstance->AddToViewport();
+			GameOverInstance->Show();
+		}				
+
 	}
 }
 

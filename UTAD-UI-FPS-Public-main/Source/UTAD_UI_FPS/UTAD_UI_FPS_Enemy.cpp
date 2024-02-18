@@ -10,23 +10,28 @@
 
 void AUTAD_UI_FPS_Enemy::BeginPlay()
 {
+	PrimaryActorTick.bCanEverTick = true;
 	Super::BeginPlay();
-	UWidgetComponent* WidgetComponent = FindComponentByClass<UWidgetComponent>();
-	if (WidgetComponent)
-	{
-		EnemyHealthBar = Cast<UEnemyHealthBar>(WidgetComponent->GetWidget());
-		EnemyHealthBar->SetVisibility(ESlateVisibility::Collapsed);
-		WidgetComponent->CastShadow = false;
-	}
+
+
+	EnemyHealthBar = FindComponentByClass<UWidgetComponent>();
+	EnemyHealthBar->SetVisibility(false);
+	EnemyHealthBar->CastShadow = false;
+	
 	
 
-	PrimaryActorTick.bCanEverTick = true;
 
 }
 
 void AUTAD_UI_FPS_Enemy::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	FVector EnemyHealthBarVector = EnemyHealthBar->GetComponentLocation();
+	APlayerCameraManager* PlayerCameraManager = UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0);
+	FTransform CameraTransform = PlayerCameraManager->GetTransform();
+	FRotator Rotator = UKismetMathLibrary::FindLookAtRotation(EnemyHealthBarVector, CameraTransform.GetLocation());
+	EnemyHealthBar->SetWorldRotation(Rotator);
 }
 
 void AUTAD_UI_FPS_Enemy::SetHealth(int NewHealth)
@@ -34,11 +39,13 @@ void AUTAD_UI_FPS_Enemy::SetHealth(int NewHealth)
 	Health = FMath::Clamp(NewHealth, 0, MaxHealth);
 	if (EnemyHealthBar)
 	{
-		if (EnemyHealthBar->GetVisibility() != ESlateVisibility::SelfHitTestInvisible)
+		if (!EnemyHealthBar->IsWidgetVisible())
 		{
-			EnemyHealthBar->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+
+			EnemyHealthBar->SetVisibility(true);
 		}
-		EnemyHealthBar->UpdateEnemyHealthBarValue(Health, MaxHealth);
+		UEnemyHealthBar* EnemyHealthBarWidget = Cast<UEnemyHealthBar>(EnemyHealthBar->GetUserWidgetObject());
+		EnemyHealthBarWidget->UpdateEnemyHealthBarValue(Health, MaxHealth);
 	}
 
 	if (Health == 0)

@@ -15,7 +15,12 @@ class USoundBase;
 class UTP_WeaponComponent;
 struct FInputActionValue;
 
+
+// UI
 class UPlayerHUD;
+class UGameOver;
+class UPlayerHitMarker;
+class USplashScreen;
 
 
 DECLARE_DELEGATE_TwoParams(FOnHealthChanged, int /* New Health*/, int /* Max Health*/)
@@ -56,6 +61,8 @@ public:
 
 protected:
 	virtual void BeginPlay();
+
+	virtual void Tick(float DeltaTime) override;
 
 public: //Delegates
 	FOnHealthChanged OnHealthChanged;
@@ -128,6 +135,17 @@ public:
 	/** Widget Blueprints that will be used to create the instances */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UI)
 	TSubclassOf<UPlayerHUD> PlayerHUDWidget;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UI)
+	TSubclassOf<UGameOver> GameOverWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UI)
+	TSubclassOf<UPlayerHitMarker> PlayerHitMarkerWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UI)
+	TSubclassOf<USplashScreen> SplashScreenWidget;
+
+
 
 protected:
 	/** Called for movement input */
@@ -157,5 +175,13 @@ private:
 
 	/** Instances that will be created and showed on viewport */
 	UPlayerHUD* PlayerHUDInstance;
+	UGameOver* GameOverInstance;
+	UPlayerHitMarker* PlayerHitMarkerInstance;
+	USplashScreen* SplashScreenInstance;
+
+
+private:
+
+	void SetUpUI();
 };
 

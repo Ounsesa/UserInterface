@@ -13,7 +13,7 @@
 
 void UPlayerHealthBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
-
+	LowHealthBlink();
 }
 
 void UPlayerHealthBar::NativeConstruct()
@@ -54,5 +54,28 @@ void UPlayerHealthBar::UpdatePlayerHealthBar(int NewHealth, int MaxHealth)
 
 void UPlayerHealthBar::LowHealthBlink()
 {
+	FProgressBarStyle HealthBarStyle = PlayerHealthBar->WidgetStyle;
+	if (bIsLowHealth)
+	{
+
+		BlinkTimer += GetWorld()->GetDeltaSeconds();
+		if (BlinkTimer >= BLINK_ANIMATION_TIME)
+		{
+			BlinkTimer = 0.f;
+			bBlinkTurningRed = !bBlinkTurningRed;
+		}
+		if (bBlinkTurningRed)
+		{
+			HealthBarStyle.FillImage.TintColor = FSlateColor(FLinearColor(1.f, 0.f, 0.f, 1.f));
+		}
+		else
+		{
+			HealthBarStyle.FillImage.TintColor = FSlateColor(FLinearColor(0.f, 1.f, 0.f, 1.f));
+		}
+	}
+	else
+	{
+		HealthBarStyle.FillImage.TintColor = FSlateColor(FLinearColor(0.f, 1.f, 0.f, 1.f));
+	}
 
 }

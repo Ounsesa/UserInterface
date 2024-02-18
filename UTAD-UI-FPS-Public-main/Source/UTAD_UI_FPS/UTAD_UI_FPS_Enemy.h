@@ -49,5 +49,5 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	UEnemyHealthBar* EnemyHealthBar;
+	UWidgetComponent* EnemyHealthBar;
 };
