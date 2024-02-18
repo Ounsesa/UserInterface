@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Containers/Map.h"
+#include "UI/Enum.h"
 #include "UTAD_UI_FPSCharacter.generated.h"
 
 class UInputComponent;
@@ -21,6 +23,10 @@ class UPlayerHUD;
 class UGameOver;
 class UPlayerHitMarker;
 class USplashScreen;
+class USkillTree;
+
+
+
 
 
 DECLARE_DELEGATE_TwoParams(FOnHealthChanged, int /* New Health*/, int /* Max Health*/)
@@ -55,6 +61,10 @@ class AUTAD_UI_FPSCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputAction* MoveAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	class UInputAction* OpenSkillTree;
+
+
 	
 public:
 	AUTAD_UI_FPSCharacter();
@@ -63,6 +73,8 @@ protected:
 	virtual void BeginPlay();
 
 	virtual void Tick(float DeltaTime) override;
+
+
 
 public: //Delegates
 	FOnHealthChanged OnHealthChanged;
@@ -145,6 +157,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UI)
 	TSubclassOf<USplashScreen> SplashScreenWidget;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UI)
+	TSubclassOf<USkillTree> SkillTreeWidget;
+
 
 
 protected:
@@ -153,6 +168,8 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	void OpenSkillTreeMenu(const FInputActionValue& Value);
 
 protected:
 	// APawn interface
@@ -178,10 +195,16 @@ private:
 	UGameOver* GameOverInstance;
 	UPlayerHitMarker* PlayerHitMarkerInstance;
 	USplashScreen* SplashScreenInstance;
+	USkillTree* SkillTreeInstance;
 
 
 private:
 
 	void SetUpUI();
+
+public:
+	TMap<ESkillType, int> SkillPoints;
+	int TotalSkillPoints = 12;
+
 };
 

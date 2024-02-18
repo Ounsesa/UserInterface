@@ -17,6 +17,7 @@
 #include "UI/GameOver.h"
 #include "UI/PlayerHitMarker.h"
 #include "UI/SplashScreen.h"
+#include "UI/SkillTree.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AUTAD_UI_FPSCharacter
@@ -62,6 +63,11 @@ void AUTAD_UI_FPSCharacter::BeginPlay()
 
 	//Set up all UI Widgets
 	SetUpUI();
+
+
+	SkillPoints.Add(ESkillType::Speed, 0);
+	SkillPoints.Add(ESkillType::Health, 0);
+	SkillPoints.Add(ESkillType::Damage, 0);
 
 	
 }
@@ -113,6 +119,9 @@ void AUTAD_UI_FPSCharacter::SetupPlayerInputComponent(class UInputComponent* Pla
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AUTAD_UI_FPSCharacter::Look);
+
+		//Skill Tree
+		EnhancedInputComponent->BindAction(OpenSkillTree, ETriggerEvent::Started, this, &AUTAD_UI_FPSCharacter::OpenSkillTreeMenu);
 	}
 }
 
@@ -154,6 +163,18 @@ void AUTAD_UI_FPSCharacter::SetUpUI()
 		UE_LOG(LogTemp, Error, TEXT("Splash Screen Widget not assigned to UTAD_UI_FPSCharacter"));
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Splash Screen Widget not assigned to UTAD_UI_FPSCharacter"));
 	}
+
+	if (SkillTreeWidget)
+	{
+		SkillTreeInstance = CreateWidget<USkillTree>(GetWorld(), SkillTreeWidget);
+		SkillTreeInstance->AddToViewport();
+		SkillTreeInstance->Hide();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Skill Tree Widget not assigned to UTAD_UI_FPSCharacter"));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Skill Tree Widget not assigned to UTAD_UI_FPSCharacter"));
+	}
 }
 
 
@@ -180,6 +201,18 @@ void AUTAD_UI_FPSCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void AUTAD_UI_FPSCharacter::OpenSkillTreeMenu(const FInputActionValue& Value)
+{
+	if (SkillTreeInstance->IsVisible())
+	{
+		SkillTreeInstance->Hide();
+	}
+	else
+	{
+		SkillTreeInstance->Show();
 	}
 }
 
