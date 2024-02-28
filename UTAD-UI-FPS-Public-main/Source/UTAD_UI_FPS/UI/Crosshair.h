@@ -22,4 +22,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Visibility)
 	void Hide();
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	class UImage* Crosshair;
+
+	void SetCrosshairColor(bool EnemyDetected);
 };

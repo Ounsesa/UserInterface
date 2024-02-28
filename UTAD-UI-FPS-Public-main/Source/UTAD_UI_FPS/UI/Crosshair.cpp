@@ -2,6 +2,7 @@
 
 
 #include "Crosshair.h"
+#include "Components/Image.h"
 
 void UCrosshair::Show()
 {
@@ -11,4 +12,9 @@ void UCrosshair::Show()
 void UCrosshair::Hide()
 {
 	SetVisibility(ESlateVisibility::Hidden);
+}
+
+void UCrosshair::SetCrosshairColor(bool EnemyDetected)
+{
+	Crosshair->SetBrushTintColor(EnemyDetected ? FLinearColor::Red : FLinearColor::White);
 }

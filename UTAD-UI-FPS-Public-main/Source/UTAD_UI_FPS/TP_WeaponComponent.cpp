@@ -28,8 +28,6 @@ void UTP_WeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	if (bIsReloading)
 	{
 		ReloadTimer += DeltaTime;
-		// To test ReloadTimer
-		// GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%f"), ReloadTimer));
 	}
 }
 

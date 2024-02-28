@@ -18,6 +18,7 @@
 #include "UI/PlayerHitMarker.h"
 #include "UI/SplashScreen.h"
 #include "UI/SkillTree.h"
+#include "UI/Crosshair.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AUTAD_UI_FPSCharacter
@@ -80,7 +81,7 @@ void AUTAD_UI_FPSCharacter::Tick(float DeltaTime)
 	{
 		FVector CameraLocation = FirstPersonCameraComponent->GetComponentLocation();
 		FVector CameraForward = FirstPersonCameraComponent->GetForwardVector();
-		FVector End = CameraLocation + (CameraForward * 1000.f);
+		FVector End = CameraLocation + (CameraForward * 10000.f);
 
 
 		FHitResult OutHit;
@@ -92,9 +93,17 @@ void AUTAD_UI_FPSCharacter::Tick(float DeltaTime)
 			AUTAD_UI_FPS_Enemy* Enemy = Cast<AUTAD_UI_FPS_Enemy>(OutHit.GetActor());
 			if (Enemy)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("true"));
+				PlayerHUDInstance->CrosshairWidget->SetCrosshairColor(true);
+			}
+			else
+			{
+				PlayerHUDInstance->CrosshairWidget->SetCrosshairColor(false);
 			}
 
+		}
+		else
+		{
+			PlayerHUDInstance->CrosshairWidget->SetCrosshairColor(false);
 		}
 	}
 

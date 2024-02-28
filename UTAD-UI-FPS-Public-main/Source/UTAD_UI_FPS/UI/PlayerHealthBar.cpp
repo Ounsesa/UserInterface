@@ -77,5 +77,5 @@ void UPlayerHealthBar::LowHealthBlink()
 	{
 		HealthBarStyle.FillImage.TintColor = FSlateColor(FLinearColor(0.f, 1.f, 0.f, 1.f));
 	}
-
+	PlayerHealthBar->SetWidgetStyle(HealthBarStyle);
 }
