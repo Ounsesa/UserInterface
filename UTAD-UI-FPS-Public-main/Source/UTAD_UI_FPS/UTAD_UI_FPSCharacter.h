@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Containers/Map.h"
-#include "UI/Enum.h"
 #include "UTAD_UI_FPSCharacter.generated.h"
 
 class UInputComponent;
@@ -140,6 +139,10 @@ public:
 
 	void SetAttachedWeaponComponent(UTP_WeaponComponent* WeaponComponent);
 
+	UPlayerHUD* GetPlayerHUDInstance() const { return PlayerHUDInstance; }
+
+	bool AnimationShooting = false;
+
 	/****************************************************/
 	/************************ UI ************************/
 	/****************************************************/
@@ -202,9 +205,6 @@ private:
 
 	void SetUpUI();
 
-public:
-	TMap<ESkillType, int> SkillPoints;
-	int TotalSkillPoints = 15;
 
 };
 

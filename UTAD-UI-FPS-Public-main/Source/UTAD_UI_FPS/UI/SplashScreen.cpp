@@ -3,12 +3,11 @@
 
 #include "SplashScreen.h"
 
-#define SPLASH_SCREEN_TIME 0.5f
 
 void USplashScreen::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {	
 	SplashScreenTimer += InDeltaTime;
-	if (SplashScreenTimer >= SPLASH_SCREEN_TIME)
+	if (SplashScreenTimer >= SplashScreenDuration)
 	{
 		RemoveFromParent();
 	}

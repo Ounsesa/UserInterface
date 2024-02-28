@@ -66,9 +66,6 @@ void AUTAD_UI_FPSCharacter::BeginPlay()
 	SetUpUI();
 
 
-	SkillPoints.Add(ESkillType::Speed, 0);
-	SkillPoints.Add(ESkillType::Health, 0);
-	SkillPoints.Add(ESkillType::Damage, 0);
 
 	
 }
@@ -104,6 +101,18 @@ void AUTAD_UI_FPSCharacter::Tick(float DeltaTime)
 		else
 		{
 			PlayerHUDInstance->CrosshairWidget->SetCrosshairColor(false);
+		}
+
+		if (!AnimationShooting)
+		{
+			if (GetVelocity().Size() > 0)
+			{
+				PlayerHUDInstance->CrosshairWidget->MoveAnimation(true);
+			}
+			else
+			{
+				PlayerHUDInstance->CrosshairWidget->MoveAnimation(false);
+			}
 		}
 	}
 
@@ -192,12 +201,15 @@ void AUTAD_UI_FPSCharacter::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
+
 	if (Controller != nullptr)
 	{
 		// add movement 
 		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
 		AddMovementInput(GetActorRightVector(), MovementVector.X);
 	}
+
+	
 }
 
 void AUTAD_UI_FPSCharacter::Look(const FInputActionValue& Value)

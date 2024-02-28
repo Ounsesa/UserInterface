@@ -17,7 +17,12 @@ class UTAD_UI_FPS_API USplashScreen : public UUserWidget
 public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = UI)
+	float SplashScreenDuration = 3.f;
+
 private:
 	float SplashScreenTimer = 0.f;
+
+	
 
 };
